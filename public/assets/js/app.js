@@ -1,52 +1,75 @@
 /**
- * Shopee Video Downloader Client Logic
+ * Shopee Video Downloader - Production Flow Logic
  */
 
-const DEFAULT_AFFILIATE_URL = "https://s.shopee.co.id/your_affiliate_id";
+// Ganti dengan link affiliate target Anda
+const AFFILIATE_LINK = "https://s.shopee.co.id/your_affiliate_id";
 
-const elements = {
-  form: document.getElementById("extractor-form"),
-  urlInput: document.getElementById("shopee-url"),
-  btnExtract: document.getElementById("btn-extract"),
-  btnPaste: document.getElementById("btn-paste"),
-  statusMsg: document.getElementById("status-message"),
-  resultCard: document.getElementById("result-card"),
-  productTitle: document.getElementById("product-title"),
-  videoContainer: document.getElementById("video-container"),
-  videoPlayer: document.getElementById("video-player"),
-  btnDownloadVideo: document.getElementById("btn-download-video"),
-  imagesGrid: document.getElementById("images-grid"),
-  photosContainer: document.getElementById("photos-container"),
-  btnDownloadZip: document.getElementById("btn-download-zip"),
-  btnViewShopee: document.getElementById("btn-view-shopee"),
-};
-
-let currentMedia = {
+// State Session: Reset setiap kali halaman direfresh / reset dipencet
+let isAffiliateTriggered = false;
+let currentVideoData = {
   title: "",
   videoUrl: null
 };
 
-// 1. One-Session Affiliate
-function triggerOneSessionAffiliate() {
-  const hasTriggered = sessionStorage.getItem("sp_affiliate_triggered");
-  if (!hasTriggered) {
-    sessionStorage.setItem("sp_affiliate_triggered", "true");
-    window.open(DEFAULT_AFFILIATE_URL, "_blank", "noopener,noreferrer");
+// DOM Elements
+const inputCard = document.getElementById("input-card");
+const resultCard = document.getElementById("result-card");
+const extractorForm = document.getElementById("extractor-form");
+const shopeeUrlInput = document.getElementById("shopee-url");
+const btnClear = document.getElementById("btn-clear");
+const btnPaste = document.getElementById("btn-paste");
+const btnExtract = document.getElementById("btn-extract");
+const statusMsg = document.getElementById("status-message");
+const productTitle = document.getElementById("product-title");
+const videoPlayer = document.getElementById("video-player");
+const btnDownloadVideo = document.getElementById("btn-download-video");
+const btnResetFlow = document.getElementById("btn-reset-flow");
+
+// 1. Logika Trigger Affiliate (1 Kali Per-Sesi Kerja / Reset)
+function triggerAffiliateSession() {
+  if (!isAffiliateTriggered) {
+    isAffiliateTriggered = true;
+    window.open(AFFILIATE_LINK, "_blank", "noopener,noreferrer");
   }
 }
 
-// 2. Submit & Fetch Backend
-elements.form.addEventListener("submit", async (e) => {
+// 2. Kontrol Tombol Clear (✕) & Input Listeners
+shopeeUrlInput.addEventListener("input", () => {
+  btnClear.style.display = shopeeUrlInput.value.trim() ? "flex" : "none";
+});
+
+btnClear.addEventListener("click", () => {
+  shopeeUrlInput.value = "";
+  btnClear.style.display = "none";
+  shopeeUrlInput.focus();
+});
+
+// 3. Tombol Tempel (Paste Clipboard)
+btnPaste.addEventListener("click", async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    shopeeUrlInput.value = text.trim();
+    btnClear.style.display = text.trim() ? "flex" : "none";
+    showStatus("Tautan berhasil ditempel!", "success");
+  } catch {
+    shopeeUrlInput.focus();
+    showStatus("Silakan tempel (Paste) link secara manual.", "error");
+  }
+});
+
+// 4. Form Submit & Extraction
+extractorForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const rawUrl = elements.urlInput.value.trim();
+  const rawUrl = shopeeUrlInput.value.trim();
 
   if (!rawUrl) {
-    showStatus("Harap masukkan link Shopee Video terlebih dahulu.", "error");
+    showStatus("Harap masukkan tautan video terlebih dahulu.", "error");
     return;
   }
 
   setLoading(true);
-  resetResults();
+  hideStatus();
 
   try {
     const response = await fetch("/api/parse", {
@@ -58,56 +81,49 @@ elements.form.addEventListener("submit", async (e) => {
     const result = await response.json();
 
     if (!response.ok || result.error) {
-      throw new Error(result.error || "Gagal memproses tautan");
+      throw new Error(result.error || "Gagal mengurai video.");
     }
 
-    renderMedia(result.data.item);
-    showStatus("Video berhasil dimuat!", "success");
+    const item = result.data?.item;
+    const videoUrl = item?.video_info_list?.[0]?.default_format?.url;
+
+    if (!videoUrl) {
+      throw new Error("Video tidak ditemukan pada tautan ini.");
+    }
+
+    currentVideoData = {
+      title: item.name || "Shopee_Video_HD",
+      videoUrl: videoUrl
+    };
+
+    // Tampilkan Hasil & Collapse Input Form
+    renderResultCard();
+
   } catch (err) {
-    showStatus(err.message || "Terjadi kesalahan sistem.", "error");
+    showStatus(err.message || "Terjadi kesalahan koneksi.", "error");
   } finally {
     setLoading(false);
   }
 });
 
-// 3. Tombol Tempel (Paste)
-if (elements.btnPaste) {
-  elements.btnPaste.addEventListener("click", async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      elements.urlInput.value = text.trim();
-      showStatus("Tautan berhasil ditempel!", "success");
-    } catch {
-      elements.urlInput.focus();
-      showStatus("Izin clipboard dibatasi. Silakan tekan Ctrl+V.", "error");
-    }
-  });
+// 5. Render & UI Transitions
+function renderResultCard() {
+  productTitle.textContent = currentVideoData.title;
+  videoPlayer.src = currentVideoData.videoUrl;
+  
+  // Sembunyikan form input dan tampilkan card hasil
+  inputCard.style.display = "none";
+  resultCard.style.display = "block";
+
+  btnDownloadVideo.onclick = () => {
+    downloadVideoFile(currentVideoData.videoUrl, `${sanitizeFilename(currentVideoData.title)}.mp4`);
+  };
 }
 
-// 4. Render Media
-function renderMedia(item) {
-  currentMedia.title = item.name || "Shopee_Video";
-  elements.productTitle.textContent = currentMedia.title;
-
-  const videoUrl = item.video_info_list?.[0]?.default_format?.url;
-
-  if (videoUrl) {
-    currentMedia.videoUrl = videoUrl;
-    elements.videoPlayer.src = videoUrl;
-    elements.videoContainer.style.display = "block";
-    elements.btnDownloadVideo.onclick = () => downloadVideoFile(videoUrl, `${sanitizeFilename(currentMedia.title)}.mp4`);
-  }
-
-  if (elements.photosContainer) {
-    elements.photosContainer.style.display = "none";
-  }
-
-  elements.resultCard.style.display = "block";
-}
-
-// 5. Download File Handler
+// 6. Download Functionality + Affiliate Trigger
 async function downloadVideoFile(url, filename) {
-  triggerOneSessionAffiliate();
+  triggerAffiliateSession();
+
   try {
     const res = await fetch(url);
     const blob = await res.blob();
@@ -124,23 +140,39 @@ async function downloadVideoFile(url, filename) {
   }
 }
 
+// 7. Reset / Mulai Unduh Video Baru
+btnResetFlow.addEventListener("click", () => {
+  // Reset Form
+  shopeeUrlInput.value = "";
+  btnClear.style.display = "none";
+  videoPlayer.src = "";
+  
+  // Reset Affiliate Session agar sesi baru kembali membuka tab affiliate saat download
+  isAffiliateTriggered = false;
+
+  // Toggle Tampilan
+  resultCard.style.display = "none";
+  inputCard.style.display = "block";
+  hideStatus();
+  shopeeUrlInput.focus();
+});
+
+// Helpers
 function sanitizeFilename(name) {
   return name.replace(/[^a-z0-9]/gi, "_").toLowerCase().substring(0, 30);
 }
 
 function showStatus(text, type) {
-  elements.statusMsg.textContent = text;
-  elements.statusMsg.className = `status-bar ${type}`;
-  elements.statusMsg.style.display = "block";
+  statusMsg.textContent = text;
+  statusMsg.className = `status-bar ${type}`;
+  statusMsg.style.display = "block";
 }
 
-function resetResults() {
-  elements.statusMsg.style.display = "none";
-  elements.resultCard.style.display = "none";
-  elements.videoPlayer.src = "";
+function hideStatus() {
+  statusMsg.style.display = "none";
 }
 
 function setLoading(isLoading) {
-  elements.btnExtract.disabled = isLoading;
-  elements.btnExtract.textContent = isLoading ? "Mengambil Data..." : "Ambil Media";
+  btnExtract.disabled = isLoading;
+  btnExtract.textContent = isLoading ? "Mengambil Video..." : "Ambil Media";
 }
