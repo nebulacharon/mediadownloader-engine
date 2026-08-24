@@ -17,9 +17,9 @@ const videoPlayer = document.getElementById("video-player");
 const btnDownloadVideo = document.getElementById("btn-download-video");
 const btnResetFlow = document.getElementById("btn-reset-flow");
 
-// Initialize Clipboard Helpers
+// Inisialisasi Kontrol Input
 initClipboardControls(shopeeUrlInput, btnClear, btnPaste, () => {
-  showStatus(statusMsg, "Tautan berhasil ditempel dari clipboard.", "success");
+  showStatus(statusMsg, "Tautan berhasil ditempel.", "success");
 });
 
 // Form Submit Handler
@@ -28,12 +28,12 @@ extractorForm.addEventListener("submit", async (e) => {
   const rawUrl = shopeeUrlInput.value.trim();
 
   if (!rawUrl) {
-    showStatus(statusMsg, "Masukkan tautan Shopee Video terlebih dahulu.", "error");
+    showStatus(statusMsg, "Harap masukkan tautan Shopee Video terlebih dahulu.", "error");
     return;
   }
 
   btnExtract.disabled = true;
-  btnExtract.querySelector(".btn-text").textContent = "Parsing Stream...";
+  btnExtract.querySelector(".btn-text").textContent = "Memproses...";
   hideStatus(statusMsg);
 
   try {
@@ -45,7 +45,7 @@ extractorForm.addEventListener("submit", async (e) => {
       platform: data.platform
     };
 
-    // Render Output Deck
+    // Tampilkan Hasil
     productTitle.textContent = appState.currentPayload.title;
     videoPlayer.src = appState.currentPayload.videoUrl;
 
@@ -60,11 +60,11 @@ extractorForm.addEventListener("submit", async (e) => {
     showStatus(statusMsg, err.message, "error");
   } finally {
     btnExtract.disabled = false;
-    btnExtract.querySelector(".btn-text").textContent = "Execute Extraction";
+    btnExtract.querySelector(".btn-text").textContent = "Ambil Video";
   }
 });
 
-// Reset Session Handler
+// Reset Session
 btnResetFlow.addEventListener("click", () => {
   appState.resetSession();
   shopeeUrlInput.value = "";
@@ -77,7 +77,19 @@ btnResetFlow.addEventListener("click", () => {
   shopeeUrlInput.focus();
 });
 
-// Global Modal Handlers
+// Animasi Lipatan Tengah (Origami Accordion)
+window.toggleOrigami = function(foldId) {
+  const foldElement = document.getElementById(foldId);
+  if (!foldElement) return;
+
+  if (foldElement.classList.contains("open")) {
+    foldElement.classList.remove("open");
+  } else {
+    foldElement.classList.add("open");
+  }
+};
+
+// Modals
 window.openModal = (id) => { const el = document.getElementById(id); if (el) el.style.display = "flex"; };
 window.closeModal = (id) => { const el = document.getElementById(id); if (el) el.style.display = "none"; };
 window.onclick = (e) => { if (e.target.classList.contains("modal-backdrop")) e.target.style.display = "none"; };
