@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shopee Video Downloader HD - Tanpa Watermark</title>
-  <meta name="description" content="Download video Shopee Reels / Video tanpa watermark kualitas jernih HD gratis dalam hitungan detik." />
+  <meta name="description" content="Download video Shopee Reels dan Video tanpa watermark kualitas jernih HD gratis, cepat, dan praktis." />
   <link rel="stylesheet" href="/assets/css/skeuomorphic.css" />
 </head>
 <body>
@@ -32,7 +32,7 @@
             autocomplete="off"
           />
           <div class="input-actions">
-            <button type="button" id="btn-clear" class="btn-clear" title="Hapus teks" style="display: none;">✕</button>
+            <button type="button" id="btn-clear" class="btn-clear" title="Hapus tautan" style="display: none;">✕</button>
             <button type="button" id="btn-paste" class="btn-subtle" title="Tempel dari Clipboard">Tempel</button>
           </div>
         </div>
@@ -50,24 +50,92 @@
         <h2 id="product-title" class="result-title"></h2>
       </div>
 
-      <!-- Video Player Frame -->
+      <!-- Video Player Frame dengan Proteksi Download Native -->
       <div id="video-container" class="media-block">
         <div class="section-tag video-tag">Video HD (Tanpa Watermark)</div>
         <div class="video-frame">
-          <video id="video-player" controls preload="metadata" playsinline></video>
+          <video 
+            id="video-player" 
+            controls 
+            controlsList="nodownload" 
+            oncontextmenu="return false;" 
+            preload="metadata" 
+            playsinline
+          ></video>
         </div>
         <button id="btn-download-video" class="skeuo-button accent-btn">
           Download Video MP4
         </button>
       </div>
 
-      <!-- Reset / Unduh Video Baru -->
+      <!-- Reset Action -->
       <div class="reset-action-block">
         <button id="btn-reset-flow" class="skeuo-button reset-btn">
           🔄 Unduh Video Lain / Mulai Ulang
         </button>
       </div>
     </section>
+
+    <!-- Visual Guide / Tutorial Section -->
+    <section class="skeuo-card guide-card">
+      <h3 class="guide-title">Cara Mengunduh Video Shopee</h3>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>Salin Link</strong>
+            <span>Buka Shopee Video, klik tombol <em>Share</em> lalu pilih <em>Salin Tautan</em>.</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>Tempel & Ambil</strong>
+            <span>Tekan tombol <em>Tempel</em> di kolom atas, lalu klik <em>Ambil Media</em>.</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>Download HD</strong>
+            <span>Pratinjau video akan tampil dan klik <em>Download Video MP4</em>.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Format Badges -->
+      <div class="supported-box">
+        <div class="support-label">Format Didukung:</div>
+        <div class="support-tags">
+          <span class="badge-tag ok">✓ id.shp.ee</span>
+          <span class="badge-tag ok">✓ sv.shopee.co.id</span>
+          <span class="badge-tag ok">✓ shopee.co.id/universal-link</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="skeuo-card faq-card">
+      <h3 class="guide-title">Pertanyaan Umum (FAQ)</h3>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Apakah video yang diunduh memiliki watermark Shopee?</summary>
+          <p>Tidak. Engine kami langsung mengambil stream resolusi asli dari CDN Shopee sehingga hasil download bersih tanpa watermark logo.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Mengapa video tidak bisa diunduh langsung via menu titik tiga?</summary>
+          <p>Menu native dinonaktifkan untuk memastikan resolusi yang terunduh adalah kualitas bit-rate HD tertinggi melalui pipeline server kami.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Apakah layanan ini gratis?</summary>
+          <p>Ya, alat ini 100% gratis digunakan kapan saja tanpa batas kuota harian.</p>
+        </details>
+      </div>
+    </section>
+
+    <footer class="app-footer">
+      <p>© 2026 Shopee Video Grabber Engine. All rights reserved.</p>
+    </footer>
   </main>
 
   <script src="/assets/js/app.js" defer></script>

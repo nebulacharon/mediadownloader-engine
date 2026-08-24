@@ -5,6 +5,8 @@
     --primary-accent: #ee4d2d;
     --primary-accent-dark: #d43b1c;
     --secondary-accent: #2ecc71;
+    --pastel-red-bg: #fed7d7;
+    --pastel-red-text: #c53030;
     --text-main: #2d3748;
     --text-muted: #718096;
   }
@@ -22,15 +24,15 @@
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 30px 16px;
+    padding: 36px 16px;
   }
   
   .main-container {
     width: 100%;
-    max-width: 520px;
+    max-width: 540px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
   }
   
   /* Header */
@@ -42,9 +44,9 @@
   }
   
   .logo-badge {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
     background: var(--primary-accent);
     color: #fff;
     display: flex;
@@ -56,7 +58,7 @@
   }
   
   .app-title {
-    font-size: 20px;
+    font-size: 21px;
     font-weight: 700;
     color: var(--text-main);
   }
@@ -66,29 +68,28 @@
     color: var(--text-muted);
   }
   
-  /* Base Card */
+  /* Base Skeuomorphic Card */
   .skeuo-card {
     background: var(--bg-base);
     border-radius: 24px;
-    padding: 22px;
+    padding: 24px;
     box-shadow: 9px 9px 18px var(--shadow-dark), -9px -9px 18px var(--shadow-light);
-    transition: all 0.3s ease;
   }
   
-  /* Input Form & Action Buttons */
+  /* Input Form & Action Bar (Skat Rapi) */
   .input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
   
   .skeuo-input {
     width: 100%;
-    padding: 14px 100px 14px 16px;
+    padding: 15px 135px 15px 18px;
     border: none;
     outline: none;
-    border-radius: 14px;
+    border-radius: 16px;
     background: var(--bg-base);
     color: var(--text-main);
     font-size: 14px;
@@ -97,53 +98,60 @@
   
   .input-actions {
     position: absolute;
-    right: 6px;
+    right: 8px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   
+  /* Tombol Clear Pastel Merah */
   .btn-clear {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border: none;
     border-radius: 50%;
-    background: #cbd5e0;
-    color: #4a5568;
-    font-size: 12px;
-    font-weight: bold;
+    background: var(--pastel-red-bg);
+    color: var(--pastel-red-text);
+    font-size: 13px;
+    font-weight: 800;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.1s ease;
+    box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+    transition: transform 0.1s ease;
   }
   
   .btn-clear:hover {
-    background: #a0aec0;
-    color: #ffffff;
+    background: #feb2b2;
+  }
+  
+  .btn-clear:active {
+    transform: scale(0.92);
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
   }
   
   .btn-subtle {
-    padding: 6px 12px;
+    padding: 7px 14px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--bg-base);
-    color: var(--text-muted);
+    color: var(--text-main);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     box-shadow: 2px 2px 5px var(--shadow-dark), -2px -2px 5px var(--shadow-light);
+    transition: all 0.1s ease;
   }
   
   .btn-subtle:active {
     box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
   }
   
-  /* Buttons */
+  /* Primary & Action Buttons */
   .skeuo-button {
     width: 100%;
-    padding: 14px 20px;
+    padding: 15px 20px;
     border: none;
     border-radius: 16px;
     font-size: 15px;
@@ -204,7 +212,7 @@
     color: #22543d;
   }
   
-  /* Result Card Styles */
+  /* Result Card */
   .session-badge {
     display: inline-block;
     font-size: 11px;
@@ -212,7 +220,7 @@
     color: #276749;
     background: #c6f6d5;
     padding: 4px 10px;
-    border-radius: 6px;
+    border-radius: 8px;
     margin-bottom: 8px;
   }
   
@@ -252,4 +260,128 @@
     margin-top: 16px;
     border-top: 1px solid rgba(0,0,0,0.06);
     padding-top: 16px;
+  }
+  
+  /* Guide Card / Tutorial Steps */
+  .guide-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-main);
+  }
+  
+  .steps-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--bg-base);
+    padding: 12px 14px;
+    border-radius: 14px;
+    box-shadow: 3px 3px 7px var(--shadow-dark), -3px -3px 7px var(--shadow-light);
+  }
+  
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--primary-accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  
+  .step-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 12px;
+  }
+  
+  .step-text strong {
+    color: var(--text-main);
+    font-size: 13px;
+  }
+  
+  .step-text span {
+    color: var(--text-muted);
+  }
+  
+  /* Badges */
+  .supported-box {
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .support-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .support-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .badge-tag.ok {
+    font-size: 11px;
+    font-weight: 600;
+    color: #276749;
+    background: #c6f6d5;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  
+  /* FAQ Accordion */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .faq-item {
+    background: var(--bg-base);
+    padding: 12px 16px;
+    border-radius: 14px;
+    box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    cursor: pointer;
+  }
+  
+  .faq-item summary {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    outline: none;
+  }
+  
+  .faq-item p {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  
+  /* Footer */
+  .app-footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 8px 0;
   }
