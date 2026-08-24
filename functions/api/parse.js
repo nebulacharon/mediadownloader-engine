@@ -8,58 +8,51 @@ export async function onRequestPost({ request }) {
         });
       }
   
-      let targetUrl = url.trim();
+      let rawInput = url.trim();
   
-      // 1. Ekstrak Target Asli jika Shortlink (Loop Redirect Resolver)
-      const browserHeaders = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7"
-      };
-  
-      if (targetUrl.includes("shp.ee") || targetUrl.includes("shope.ee") || targetUrl.includes("s.shopee.co.id")) {
+      // 1. Resolve Rantai Redirect Shortlink (shp.ee / s.shopee.co.id / universal-link)
+      let finalUrl = rawInput;
+      if (rawInput.includes("shp.ee") || rawInput.includes("shope.ee") || rawInput.includes("s.shopee.co.id")) {
         try {
-          const headRes = await fetch(targetUrl, {
-            method: "GET",
-            redirect: "follow",
-            headers: browserHeaders
-          });
-          targetUrl = headRes.url;
-        } catch (e) {
-          // Fallback jika fetch redirect gagal
-        }
-      }
-  
-      // 2. Cek apakah ini Shopee Video (Reels)
-      if (targetUrl.includes("/video/") || targetUrl.includes("/sv/")) {
-        const videoIdMatch = targetUrl.match(/video\/([a-zA-Z0-9_-]+)/) || targetUrl.match(/item\/([a-zA-Z0-9_-]+)/);
-        if (videoIdMatch) {
-          const videoRes = await fetch(`https://shopee.co.id/api/v4/video/get_video_detail?video_id=${videoIdMatch[1]}`, {
-            headers: browserHeaders
-          });
-          const vJson = await videoRes.json();
-          if (vJson?.data?.video_info) {
-            const v = vJson.data.video_info;
-            return new Response(JSON.stringify({
-              data: {
-                item: {
-                  name: vJson.data.caption || "Shopee Video",
-                  video_info_list: [{ default_format: { url: v.video_url || v.url } }],
-                  images: [v.cover_url]
-                }
+          let currentUrl = rawInput;
+          for (let i = 0; i < 3; i++) {
+            const res = await fetch(currentUrl, {
+              method: "GET",
+              redirect: "manual",
+              headers: {
+                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
               }
-            }), { headers: { "Content-Type": "application/json" } });
+            });
+  
+            const location = res.headers.get("location");
+            if (location) {
+              currentUrl = location.startsWith("http") ? location : `https://shopee.co.id${location}`;
+            } else {
+              // Cek jika ada meta refresh redirect di body
+              const bodyText = await res.text();
+              const metaMatch = bodyText.match(/content=["']\d+;\s*url=([^"']+)["']/i) || 
+                                bodyText.match(/window\.location\.href\s*=\s*["']([^"']+)["']/i);
+              if (metaMatch) {
+                currentUrl = metaMatch[1];
+              } else {
+                break;
+              }
+            }
           }
+          finalUrl = currentUrl;
+        } catch (e) {
+          finalUrl = rawInput;
         }
       }
   
-      // 3. Ekstrak Shop ID & Item ID dari URL Bersih
+      // 2. Ekstrak Shop ID & Item ID dari URL Final
       let shopId = null;
       let itemId = null;
   
-      const matchDash = targetUrl.match(/-i\.(\d+)\.(\d+)/);
-      const matchProduct = targetUrl.match(/product\/(\d+)\/(\d+)/);
-      const matchItem = targetUrl.match(/item\/(\d+)\/(\d+)/);
+      const matchDash = finalUrl.match(/-i\.(\d+)\.(\d+)/);
+      const matchProduct = finalUrl.match(/product\/(\d+)\/(\d+)/);
+      const matchUniversal = finalUrl.match(/item\/(\d+)\/(\d+)/) || finalUrl.match(/itemid=(\d+)&shopid=(\d+)/i);
   
       if (matchDash) {
         shopId = matchDash[1];
@@ -67,77 +60,91 @@ export async function onRequestPost({ request }) {
       } else if (matchProduct) {
         shopId = matchProduct[1];
         itemId = matchProduct[2];
-      } else if (matchItem) {
-        shopId = matchItem[1];
-        itemId = matchItem[2];
+      } else if (matchUniversal) {
+        if (finalUrl.includes("itemid=")) {
+          itemId = matchUniversal[1];
+          shopId = matchUniversal[2];
+        } else {
+          shopId = matchUniversal[1];
+          itemId = matchUniversal[2];
+        }
       }
   
       if (!shopId || !itemId) {
-        return new Response(JSON.stringify({ error: "Gagal mengekstrak ID Produk. Coba gunakan link lengkap dari browser." }), {
+        return new Response(JSON.stringify({ 
+          error: "Gagal mengekstrak ID Produk. Coba gunakan tautan lengkap dari browser." 
+        }), {
           status: 422,
           headers: { "Content-Type": "application/json" }
         });
       }
   
-      // 4. Ambil HTML Halaman Produk Shopee Langsung (Bypass WAF API)
-      const productPageUrl = `https://shopee.co.id/product/${shopId}/${itemId}`;
-      const pageRes = await fetch(productPageUrl, {
+      // 3. Fetch Data Produk via Endpoint Mobile API v2 (Bypass WAF Datacenter)
+      const mobileApiUrl = `https://mall.shopee.co.id/api/v2/item/get?itemid=${itemId}&shopid=${shopId}`;
+      const apiRes = await fetch(mobileApiUrl, {
         headers: {
-          ...browserHeaders,
-          "Referer": "https://shopee.co.id/"
+          "User-Agent": "Shopee/3.15.0 (Android 12; Pixel 6)",
+          "Accept": "application/json",
+          "Referer": "https://mall.shopee.co.id/"
         }
       });
   
-      const pageHtml = await pageRes.text();
+      const responseJson = await apiRes.json();
+      const item = responseJson.item || responseJson.data?.item;
   
-      // A. Coba ekstrak dari Schema LD+JSON yang tertanam di HTML
-      let extractedData = null;
-      const ldJsonMatches = pageHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi);
-  
-      if (ldJsonMatches) {
-        for (const tag of ldJsonMatches) {
+      if (!item) {
+        // Fallback: Scrape JSON-LD spesifik dari halaman produk
+        const pageRes = await fetch(`https://shopee.co.id/product/${shopId}/${itemId}`, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Referer": "https://shopee.co.id/"
+          }
+        });
+        const html = await pageRes.text();
+        const ldMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i);
+        
+        if (ldMatch) {
           try {
-            const jsonContent = tag.replace(/<script type="application\/ld\+json">/i, "").replace(/<\/script>/i, "");
-            const parsed = JSON.parse(jsonContent);
-            if (parsed["@type"] === "Product" || parsed.image) {
-              extractedData = {
-                name: parsed.name || "Produk Shopee",
-                itemid: itemId,
-                shopid: shopId,
-                images: Array.isArray(parsed.image) ? parsed.image : [parsed.image],
-                video_info_list: []
-              };
-              break;
-            }
+            const parsedLd = JSON.parse(ldMatch[1]);
+            const rawImgs = Array.isArray(parsedLd.image) ? parsedLd.image : [parsedLd.image];
+            return new Response(JSON.stringify({
+              data: {
+                item: {
+                  name: parsedLd.name || "Shopee Product",
+                  itemid: itemId,
+                  shopid: shopId,
+                  images: rawImgs.filter(Boolean),
+                  video_info_list: []
+                }
+              }
+            }), { headers: { "Content-Type": "application/json" } });
           } catch (e) {}
         }
-      }
   
-      // B. Ekstrak Video URL & Image ID via Regex Pattern dari raw HTML
-      const videoUrlMatch = pageHtml.match(/https:\/\/cvf\.shopee\.co\.id\/file\/[a-zA-Z0-9_\-]+/i) || 
-                             pageHtml.match(/https:\/\/vod-.*\.susercontent\.com\/[a-zA-Z0-9_\.\-\/]+\.mp4/i);
-      
-      // Ekstrak seluruh Image ID (32 char hex) dari HTML
-      const imageMatches = [...pageHtml.matchAll(/down-id\.img\.susercontent\.com\/file\/([a-f0-9]{32})/gi)];
-      const uniqueImages = [...new Set(imageMatches.map(m => m[1]))];
-  
-      if (!extractedData && uniqueImages.length === 0) {
-        return new Response(JSON.stringify({ error: "Shopee mengaktifkan bot protection untuk link ini. Coba buka link lain." }), {
-          status: 403,
+        return new Response(JSON.stringify({ error: "Gagal mengambil media. Produk mungkin habis atau dibatasi." }), {
+          status: 404,
           headers: { "Content-Type": "application/json" }
         });
       }
   
-      const finalResult = {
-        name: extractedData?.name || "Shopee Product Media",
-        itemid: itemId,
-        shopid: shopId,
-        images: uniqueImages.length > 0 ? uniqueImages : (extractedData?.images || []),
-        video_info_list: videoUrlMatch ? [{ default_format: { url: videoUrlMatch[0] } }] : []
-      };
+      // 4. Strukturkan Hanya Aset Produk yang Valid
+      const cleanImages = (item.images || []).map(id => id.toString());
+      const videoList = item.video_info_list && item.video_info_list.length > 0 
+        ? item.video_info_list.map(v => ({ default_format: { url: v.default_format?.url || v.url } }))
+        : [];
   
-      return new Response(JSON.stringify({ data: { item: finalResult } }), {
-        headers: { 
+      return new Response(JSON.stringify({
+        data: {
+          item: {
+            name: item.name,
+            itemid: item.itemid || itemId,
+            shopid: item.shopid || shopId,
+            images: cleanImages,
+            video_info_list: videoList
+          }
+        }
+      }), {
+        headers: {
           "Content-Type": "application/json",
           "Cache-Control": "public, max-age=300"
         }
