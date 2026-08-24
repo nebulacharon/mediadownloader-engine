@@ -12,8 +12,11 @@ const btnClear = document.getElementById("btn-clear");
 const btnPaste = document.getElementById("btn-paste");
 const btnExtract = document.getElementById("btn-extract");
 const statusMsg = document.getElementById("status-message");
+
 const productTitle = document.getElementById("product-title");
 const videoPlayer = document.getElementById("video-player");
+const videoDuration = document.getElementById("video-duration");
+const videoSize = document.getElementById("video-size");
 const btnDownloadVideo = document.getElementById("btn-download-video");
 const btnResetFlow = document.getElementById("btn-reset-flow");
 
@@ -45,12 +48,22 @@ extractorForm.addEventListener("submit", async (e) => {
       platform: data.platform
     };
 
-    // Tampilkan Hasil
+    // Set Data Video
     productTitle.textContent = appState.currentPayload.title;
     videoPlayer.src = appState.currentPayload.videoUrl;
 
+    // Kalkulasi Durasi & Estimasi Ukuran
+    videoPlayer.onloadedmetadata = () => {
+      const minutes = Math.floor(videoPlayer.duration / 60);
+      const seconds = Math.floor(videoPlayer.duration % 60);
+      videoDuration.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
+
+    fetchVideoSize(appState.currentPayload.videoUrl);
+
+    // Tampilkan Card Hasil Split Layout
     inputContainer.style.display = "none";
-    resultCard.style.display = "flex";
+    resultCard.style.display = "grid";
 
     btnDownloadVideo.onclick = () => {
       downloadVideoStream(appState.currentPayload.videoUrl, `${sanitizeSlug(appState.currentPayload.title)}.mp4`);
@@ -64,12 +77,30 @@ extractorForm.addEventListener("submit", async (e) => {
   }
 });
 
+// Helper: Ambil Ukuran File Stream
+async function fetchVideoSize(url) {
+  try {
+    const res = await fetch(url, { method: "HEAD" });
+    const bytes = res.headers.get("content-length");
+    if (bytes) {
+      const mb = (parseInt(bytes) / (1024 * 1024)).toFixed(1);
+      videoSize.textContent = `${mb} MB`;
+    } else {
+      videoSize.textContent = "~5.0 MB";
+    }
+  } catch {
+    videoSize.textContent = "~5.0 MB";
+  }
+}
+
 // Reset Session
 btnResetFlow.addEventListener("click", () => {
   appState.resetSession();
   shopeeUrlInput.value = "";
   btnClear.style.display = "none";
   videoPlayer.src = "";
+  videoDuration.textContent = "--:--";
+  videoSize.textContent = "-- MB";
 
   resultCard.style.display = "none";
   inputContainer.style.display = "block";

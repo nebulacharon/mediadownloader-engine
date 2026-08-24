@@ -76,28 +76,66 @@
         <div id="status-message" class="status-box" style="display: none;"></div>
       </div>
 
-      <!-- Result Deck -->
-      <div id="result-card" class="glass-terminal result-box" style="display: none;">
-        <div class="result-header">
-          <span class="status-pill">Siap Diunduh</span>
-          <h4 id="product-title" class="video-title"></h4>
-        </div>
-        <div class="video-wrapper">
-          <video 
-            id="video-player" 
-            controls 
-            controlsList="nodownload" 
-            oncontextmenu="return false;" 
-            preload="metadata" 
-            playsinline
-          ></video>
-        </div>
-        <div class="action-row">
-          <button id="btn-download-video" class="btn-primary btn-dl">Unduh Video MP4 (HD)</button>
-          <button id="btn-reset-flow" class="btn-secondary">Unduh Video Lain</button>
-        </div>
+<!-- Result Deck (Horizontal Split Glass Layout) -->
+<div id="result-card" class="glass-terminal result-split-card" style="display: none;">
+        
+  <!-- Sisi Kiri: Preview Video Portrait -->
+  <div class="split-left">
+    <div class="video-portrait-wrapper">
+      <video 
+        id="video-player" 
+        controls 
+        controlsList="nodownload" 
+        oncontextmenu="return false;" 
+        preload="metadata" 
+        playsinline
+      ></video>
+    </div>
+  </div>
+
+  <!-- Sisi Kanan: Detail & Aksi Unduh -->
+  <div class="split-right">
+    <div class="success-banner">
+      <span class="success-dot"></span>
+      <span>Success! Video siap untuk diunduh.</span>
+    </div>
+
+    <h3 id="product-title" class="video-meta-title"></h3>
+
+    <!-- Grid Kartu Spesifikasi (Durasi & Ukuran) -->
+    <div class="meta-metrics-grid">
+      <div class="metric-box">
+        <span class="metric-label">Durasi</span>
+        <strong id="video-duration" class="metric-val">--:--</strong>
       </div>
-    </section>
+      <div class="metric-box">
+        <span class="metric-label">Ukuran File</span>
+        <strong id="video-size" class="metric-val">-- MB</strong>
+      </div>
+    </div>
+
+    <!-- Tombol Aksi -->
+    <div class="action-stack">
+      <button id="btn-download-video" class="btn-primary btn-save">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Simpan Video Tanpa Watermark</span>
+      </button>
+
+      <button id="btn-reset-flow" class="btn-secondary btn-new-session">
+        🔄 Unduh Video Lain
+      </button>
+    </div>
+
+    <div class="trust-badge">
+      <span>🔒 Jalur Aman</span>
+      <span>•</span>
+      <span>Tanpa Watermark</span>
+      <span>•</span>
+      <span>Format MP4 HD</span>
+    </div>
+  </div>
+
+</div>
 
     <!-- Panduan Penggunaan dengan Origami Fold Transition -->
     <section id="panduan" class="section-block">
