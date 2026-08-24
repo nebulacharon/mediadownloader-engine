@@ -1,7 +1,7 @@
 import { appState } from "./modules/state.js";
 import { parseMediaUrl } from "./modules/api.js";
 import { initClipboardControls } from "./modules/clipboard.js";
-import { showStatus, hideStatus, sanitizeSlug, downloadVideoStream } from "./modules/ui.js";
+import { showStatus, hideStatus, generateBrandedFilename, downloadVideoStream } from "./modules/ui.js";
 
 // DOM Elements
 const inputContainer = document.getElementById("input-container");
@@ -52,7 +52,7 @@ extractorForm.addEventListener("submit", async (e) => {
     productTitle.textContent = appState.currentPayload.title;
     videoPlayer.src = appState.currentPayload.videoUrl;
 
-    // Kalkulasi Durasi & Estimasi Ukuran
+    // Kalkulasi Durasi
     videoPlayer.onloadedmetadata = () => {
       const minutes = Math.floor(videoPlayer.duration / 60);
       const seconds = Math.floor(videoPlayer.duration % 60);
@@ -65,8 +65,9 @@ extractorForm.addEventListener("submit", async (e) => {
     inputContainer.style.display = "none";
     resultCard.style.display = "grid";
 
+    // Download Handler dengan Auto Branded Filename
     btnDownloadVideo.onclick = () => {
-      downloadVideoStream(appState.currentPayload.videoUrl, `${sanitizeSlug(appState.currentPayload.title)}.mp4`);
+      downloadVideoStream(appState.currentPayload.videoUrl, generateBrandedFilename());
     };
 
   } catch (err) {
@@ -86,10 +87,10 @@ async function fetchVideoSize(url) {
       const mb = (parseInt(bytes) / (1024 * 1024)).toFixed(1);
       videoSize.textContent = `${mb} MB`;
     } else {
-      videoSize.textContent = "~5.0 MB";
+      videoSize.textContent = "~25.0 MB";
     }
   } catch {
-    videoSize.textContent = "~5.0 MB";
+    videoSize.textContent = "~25.0 MB";
   }
 }
 

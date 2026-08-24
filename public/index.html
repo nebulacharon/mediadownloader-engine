@@ -76,66 +76,73 @@
         <div id="status-message" class="status-box" style="display: none;"></div>
       </div>
 
-<!-- Result Deck (Horizontal Split Glass Layout) -->
-<div id="result-card" class="glass-terminal result-split-card" style="display: none;">
+      <!-- Result Deck (Horizontal Split Glass Layout) -->
+      <div id="result-card" class="glass-terminal result-split-card" style="display: none;">
         
-  <!-- Sisi Kiri: Preview Video Portrait -->
-  <div class="split-left">
-    <div class="video-portrait-wrapper">
-      <video 
-        id="video-player" 
-        controls 
-        controlsList="nodownload" 
-        oncontextmenu="return false;" 
-        preload="metadata" 
-        playsinline
-      ></video>
-    </div>
-  </div>
+        <!-- Sisi Kiri: Preview Video Portrait -->
+        <div class="split-left">
+          <div class="video-portrait-wrapper">
+            <video 
+              id="video-player" 
+              controls 
+              controlsList="nodownload" 
+              oncontextmenu="return false;" 
+              preload="metadata" 
+              playsinline
+            ></video>
+          </div>
+        </div>
 
-  <!-- Sisi Kanan: Detail & Aksi Unduh -->
-  <div class="split-right">
-    <div class="success-banner">
-      <span class="success-dot"></span>
-      <span>Success! Video siap untuk diunduh.</span>
-    </div>
+        <!-- Sisi Kanan: Detail & Aksi Unduh -->
+        <div class="split-right">
+          <div class="success-banner">
+            <span class="success-dot"></span>
+            <span>Success! Video siap untuk diunduh.</span>
+          </div>
 
-    <h3 id="product-title" class="video-meta-title"></h3>
+          <h3 id="product-title" class="video-meta-title"></h3>
 
-    <!-- Grid Kartu Spesifikasi (Durasi & Ukuran) -->
-    <div class="meta-metrics-grid">
-      <div class="metric-box">
-        <span class="metric-label">Durasi</span>
-        <strong id="video-duration" class="metric-val">--:--</strong>
+          <!-- Grid Kartu Spesifikasi (Durasi & Ukuran) -->
+          <div class="meta-metrics-grid">
+            <div class="metric-box">
+              <span class="metric-label">Durasi</span>
+              <strong id="video-duration" class="metric-val">--:--</strong>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Ukuran File</span>
+              <strong id="video-size" class="metric-val">-- MB</strong>
+            </div>
+          </div>
+
+          <!-- Tombol Aksi -->
+          <div class="action-stack">
+            <button id="btn-download-video" class="btn-primary btn-save">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Simpan Video Tanpa Watermark</span>
+            </button>
+
+            <button id="btn-reset-flow" class="btn-secondary btn-new-session">
+              🔄 Unduh Video Lain
+            </button>
+          </div>
+
+          <div class="trust-badge">
+            <span>💎 Master Resolusi Maksimal</span>
+            <span>•</span>
+            <span>Tanpa Kompresi Bitrate</span>
+          </div>
+
+          <!-- Catatan Khusus Codec Format -->
+          <div class="codec-alert-box">
+            <div class="alert-icon">💡</div>
+            <div class="alert-text">
+              <strong>Catatan Resolusi Tinggi:</strong> Video ini menggunakan format master resolusi penuh (H.265/HEVC). Jika video tidak dapat diputar di pemutar bawaan Windows Media Player, gunakan <strong>VLC Player</strong> atau langsung buka/edit melalui ponsel dan aplikasi editing (CapCut/VN).
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div class="metric-box">
-        <span class="metric-label">Ukuran File</span>
-        <strong id="video-size" class="metric-val">-- MB</strong>
-      </div>
-    </div>
-
-    <!-- Tombol Aksi -->
-    <div class="action-stack">
-      <button id="btn-download-video" class="btn-primary btn-save">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span>Simpan Video Tanpa Watermark</span>
-      </button>
-
-      <button id="btn-reset-flow" class="btn-secondary btn-new-session">
-        🔄 Unduh Video Lain
-      </button>
-    </div>
-
-    <div class="trust-badge">
-      <span>🔒 Jalur Aman</span>
-      <span>•</span>
-      <span>Tanpa Watermark</span>
-      <span>•</span>
-      <span>Format MP4 HD</span>
-    </div>
-  </div>
-
-</div>
+    </section>
 
     <!-- Panduan Penggunaan dengan Origami Fold Transition -->
     <section id="panduan" class="section-block">
@@ -156,9 +163,9 @@
           <div id="fold-step1" class="origami-fold">
             <h5>Panduan Salin Tautan</h5>
             <ol>
-              <li>Buka Shopee dan masuk ke tab <strong>Shopee Video</strong>.</li>
-              <li>Klik tombol <strong>Bagikan</strong> di sisi kanan bawah video.</li>
-              <li>Pilih opsi <strong>Salin Tautan</strong> untuk menyalin link ke clipboard perangkat.</li>
+              <li>Buka aplikasi Shopee dan masuk ke tab <strong>Shopee Video</strong>.</li>
+              <li>Klik ikon <strong>Bagikan</strong> di sisi kanan bawah video.</li>
+              <li>Pilih opsi <strong>Salin Tautan</strong>.</li>
             </ol>
           </div>
         </div>
@@ -166,7 +173,7 @@
         <div class="timeline-step">
           <div class="step-desc">
             <h4>Tempel & Ekstrak Media</h4>
-            <p>Masukkan tautan yang telah disalin ke dalam formulir di atas lalu tekan tombol <strong>Ambil Video</strong>.</p>
+            <p>Masukkan tautan ke formulir di atas lalu klik tombol <strong>Ambil Video</strong>.</p>
           </div>
           <div class="button-group">
             <button class="btn-guide" onclick="toggleOrigami('fold-step2')">Detail Panduan ↧</button>
@@ -174,16 +181,33 @@
           <div id="fold-step2" class="origami-fold">
             <h5>Panduan Ekstraksi</h5>
             <ol>
-              <li>Gunakan tombol <strong>Tempel</strong> pada kolom input untuk menempelkan tautan secara instan.</li>
-              <li>Sistem akan memverifikasi tautan dan mengambil file video asli dari server CDN.</li>
+              <li>Gunakan tombol <strong>Tempel</strong> pada kolom input untuk menempelkan tautan secara cepat.</li>
+              <li>Engine akan memproses stream video master resolusi tinggi tanpa watermark.</li>
             </ol>
           </div>
         </div>
 
         <div class="timeline-step">
           <div class="step-desc">
-            <h4>Simpan Video Resolusi Penuh</h4>
-            <p>Pratinjau video akan tampil secara otomatis. Klik tombol unduh untuk menyimpan file MP4 tanpa watermark.</p>
+            <h4>Simpan Video Tanpa Watermark</h4>
+            <p>Periksa pratinjau, durasi, dan ukuran video pada kartu hasil, lalu klik <strong>Simpan Video Tanpa Watermark</strong>.</p>
+          </div>
+        </div>
+
+        <div class="timeline-step">
+          <div class="step-desc">
+            <h4>Pemutaran & Pengeditan Media</h4>
+            <p>File yang diunduh berformat master HD (H.265). File ini langsung kompatibel untuk galeri ponsel, CapCut, VN, TikTok, serta pemutar VLC di komputer.</p>
+          </div>
+          <div class="button-group">
+            <button class="btn-guide" onclick="toggleOrigami('fold-step4')">Tips Pemutaran di PC ↧</button>
+          </div>
+          <div id="fold-step4" class="origami-fold">
+            <h5>Tips Pemutaran Video HEVC di Windows</h5>
+            <ol>
+              <li>Gunakan <strong>VLC Media Player</strong> atau <strong>PotPlayer</strong> (gratis dan mendukung semua codec).</li>
+              <li>Atau transfer video ke HP (Android/iPhone) untuk langsung diputar tanpa aplikasi tambahan.</li>
+            </ol>
           </div>
         </div>
       </div>
@@ -200,32 +224,32 @@
         <div class="feature-card">
           <div class="feature-icon">✨</div>
           <h4>Tanpa Watermark</h4>
-          <p>Video disimpan bersih tanpa logo atau atribut tambahan, cocok untuk kebutuhan materi presentasi dan arsip konten.</p>
+          <p>Video disimpan bersih tanpa logo atau atribut akun, siap digunakan untuk keperluan editing dan arsip konten.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">⚡</div>
           <h4>Proses Cepat</h4>
-          <p>Tautan diproses secara langsung dengan latensi rendah tanpa memerlukan antrean panjang.</p>
+          <p>Tautan diproses secara langsung dengan latensi rendah tanpa antrean.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🔒</div>
           <h4>Privasi Terjaga</h4>
-          <p>Kami tidak menyimpan riwayat unduhan atau mengumpulkan data pribadi dari perangkat Anda.</p>
+          <p>Kami tidak menyimpan riwayat unduhan atau mengumpulkan data pribadi Anda.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">📱</div>
           <h4>Kompatibel Semua Perangkat</h4>
-          <p>Dapat diakses dengan lancar melalui browser ponsel (Android/iOS), tablet, maupun komputer desktop.</p>
+          <p>Dapat diakses lancar melalui ponsel (Android/iOS), tablet, maupun desktop.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🎁</div>
           <h4>100% Gratis</h4>
-          <p>Seluruh fitur dapat digunakan secara gratis tanpa perlu registrasi akun atau biaya langganan.</p>
+          <p>Seluruh fitur dapat digunakan tanpa registrasi akun atau biaya langganan.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🎬</div>
-          <h4>Kualitas HD Asli</h4>
-          <p>File video yang diunduh mempertahankan resolusi dan frame rate asli dari sumber media.</p>
+          <h4>Kualitas Master Asli</h4>
+          <p>File video yang diunduh mempertahankan resolusi penuh tanpa kompresi visual tambahan.</p>
         </div>
       </div>
     </section>
@@ -240,31 +264,41 @@
       <div class="faq-accordion">
         <div class="faq-item">
           <div class="faq-header" onclick="toggleOrigami('faq-1')">
-            <h5>Apakah saya perlu menginstal aplikasi tambahan?</h5>
+            <h5>Mengapa video tidak bisa diputar di Windows Media Player bawaan?</h5>
             <span class="faq-arrow">↧</span>
           </div>
           <div id="faq-1" class="origami-fold">
-            <p>Tidak. NEXMEDIA berbasis web sehingga dapat langsung digunakan melalui peramban internet seperti Chrome, Safari, atau Firefox.</p>
+            <p>Video yang diunduh adalah file master beresolusi penuh dengan encoding <strong>H.265 (HEVC)</strong> untuk mempertahankan kualitas tertinggi. Windows Media Player versi standar membutuhkan codec tambahan dari Microsoft Store. Solusi termudah adalah memutarnya menggunakan <strong>VLC Player</strong> gratis atau membukanya di ponsel.</p>
           </div>
         </div>
 
         <div class="faq-item">
           <div class="faq-header" onclick="toggleOrigami('faq-2')">
-            <h5>Format tautan Shopee apa saja yang didukung?</h5>
+            <h5>Apakah video bisa langsung diedit di CapCut atau Canva?</h5>
             <span class="faq-arrow">↧</span>
           </div>
           <div id="faq-2" class="origami-fold">
-            <p>Engine ini mendukung tautan Shopee Video dari aplikasi mobile (<code>https://id.shp.ee/...</code>) dan tautan video peramban (<code>https://sv.shopee.co.id/...</code>).</p>
+            <p>Ya. Aplikasi editing modern seperti CapCut, Premiere Pro, DaVinci Resolve, VN, dan Canva mendukung penuh format H.265/HEVC ini secara native.</p>
           </div>
         </div>
 
         <div class="faq-item">
           <div class="faq-header" onclick="toggleOrigami('faq-3')">
-            <h5>Apakah ada batas jumlah unduhan per hari?</h5>
+            <h5>Format tautan Shopee apa saja yang didukung?</h5>
             <span class="faq-arrow">↧</span>
           </div>
           <div id="faq-3" class="origami-fold">
-            <p>Tidak ada batasan. Anda dapat mengunduh video sebanyak yang diperlukan tanpa kuota harian.</p>
+            <p>Engine ini mendukung tautan Shopee Video dari aplikasi mobile (<code>https://id.shp.ee/...</code>) maupun tautan web peramban (<code>https://sv.shopee.co.id/...</code>).</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-header" onclick="toggleOrigami('faq-4')">
+            <h5>Apakah ada batasan jumlah unduhan per hari?</h5>
+            <span class="faq-arrow">↧</span>
+          </div>
+          <div id="faq-4" class="origami-fold">
+            <p>Tidak ada batasan. Anda dapat mengunduh video sebanyak yang dibutuhkan tanpa batasan kuota harian.</p>
           </div>
         </div>
       </div>

@@ -1,12 +1,21 @@
 import { executeAffiliateSession } from "./affiliate.js";
 
-export function sanitizeSlug(str) {
-  return str.replace(/[^a-z0-9]/gi, "_").toLowerCase().substring(0, 32);
+// Generator Format Nama: NEXMEDIA-20260824-101160.mp4
+export function generateBrandedFilename() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+
+  return `NEXMEDIA-${year}${month}${day}-${hours}${minutes}${seconds}.mp4`;
 }
 
 export function showStatus(el, text, type) {
   el.textContent = text;
-  el.className = `status-banner ${type}`;
+  el.className = `status-box ${type}`;
   el.style.display = "block";
 }
 
@@ -23,7 +32,7 @@ export async function downloadVideoStream(url, filename) {
     const blobUrl = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = blobUrl;
-    a.download = filename;
+    a.download = filename || generateBrandedFilename();
     document.body.appendChild(a);
     a.click();
     a.remove();
