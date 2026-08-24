@@ -3,140 +3,263 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shopee Video Downloader HD - Tanpa Watermark</title>
-  <meta name="description" content="Download video Shopee Reels dan Video tanpa watermark kualitas jernih HD gratis, cepat, dan praktis." />
-  <link rel="stylesheet" href="/assets/css/skeuomorphic.css" />
+  <title>NEXMEDIA // Professional Video Extraction Engine</title>
+  <meta name="description" content="Platform ekstraksi video performa tinggi tanpa watermark. Download Shopee Video & Reels HD tanpa kompresi secara instan." />
+  
+  <!-- Premium Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/assets/css/liquidglass.css" />
 </head>
 <body>
 
-  <main class="main-container">
-    <!-- Header App -->
-    <header class="app-header">
-      <div class="logo-badge">SV</div>
-      <div>
-        <h1 class="app-title">Shopee Video Grabber</h1>
-        <p class="app-subtitle">Download Reels & Video HD Tanpa Watermark</p>
-      </div>
-    </header>
+  <!-- Background Ambient Glow -->
+  <div class="ambient-glow glow-top"></div>
+  <div class="ambient-glow glow-bottom"></div>
 
-    <!-- Card Input Form -->
-    <section id="input-card" class="skeuo-card form-card">
-      <form id="extractor-form">
-        <div class="input-wrapper">
-          <input 
-            type="text" 
-            id="shopee-url" 
-            class="skeuo-input" 
-            placeholder="Tempel tautan Shopee Video / Reels..." 
-            required 
-            autocomplete="off"
-          />
-          <div class="input-actions">
-            <button type="button" id="btn-clear" class="btn-clear" title="Hapus tautan" style="display: none;">✕</button>
-            <button type="button" id="btn-paste" class="btn-subtle" title="Tempel dari Clipboard">Tempel</button>
-          </div>
-        </div>
-        <button type="submit" id="btn-extract" class="skeuo-button primary-btn">
-          Ambil Media
+  <!-- Navigation Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <span class="brand-icon">◆</span>
+        <span class="brand-name">NEXMEDIA<span class="brand-dot">.</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#downloader" class="nav-link active">Downloader</a>
+        <a href="#how-it-works" class="nav-link">Workflow</a>
+        <a href="#faq" class="nav-link">Documentation</a>
+        <a href="#legal" class="nav-link">Disclaimer</a>
+      </nav>
+      <div class="nav-status">
+        <span class="status-indicator"></span>
+        <span class="status-text">Node v2.4 Active</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        <span>SHOPEE REELS & VIDEO HD EXTRACTION</span>
+      </div>
+      <h1 class="hero-title">High-Throughput Media Engine<span class="text-accent">.</span></h1>
+      <p class="hero-description">
+        Ekstraksi stream video tanpa watermark langsung dari Content Delivery Network. Zero latency, tanpa kompresi visual, dan didesain untuk workflow kreator konten.
+      </p>
+
+      <!-- Platform Selection Tabs -->
+      <div class="platform-tabs">
+        <button class="tab-btn active" data-platform="shopee">
+          <span class="tab-dot shopee"></span> Shopee Video
         </button>
-      </form>
-      <div id="status-message" class="status-bar" style="display: none;"></div>
-    </section>
-
-    <!-- Result Card -->
-    <section id="result-card" class="skeuo-card result-wrapper" style="display: none;">
-      <div class="result-header">
-        <span class="session-badge">✓ Sesi Ekstraksi Selesai</span>
-        <h2 id="product-title" class="result-title"></h2>
-      </div>
-
-      <!-- Video Player Frame dengan Proteksi Download Native -->
-      <div id="video-container" class="media-block">
-        <div class="section-tag video-tag">Video HD (Tanpa Watermark)</div>
-        <div class="video-frame">
-          <video 
-            id="video-player" 
-            controls 
-            controlsList="nodownload" 
-            oncontextmenu="return false;" 
-            preload="metadata" 
-            playsinline
-          ></video>
-        </div>
-        <button id="btn-download-video" class="skeuo-button accent-btn">
-          Download Video MP4
+        <button class="tab-btn disabled" title="Segera Hadir">
+          <span class="tab-dot tiktok"></span> TikTok <span class="badge-mini">Soon</span>
+        </button>
+        <button class="tab-btn disabled" title="Segera Hadir">
+          <span class="tab-dot ig"></span> IG Reels <span class="badge-mini">Soon</span>
         </button>
       </div>
 
-      <!-- Reset Action -->
-      <div class="reset-action-block">
-        <button id="btn-reset-flow" class="skeuo-button reset-btn">
-          🔄 Unduh Video Lain / Mulai Ulang
-        </button>
+      <!-- Main Terminal Downloader Card -->
+      <div id="downloader" class="terminal-card">
+        <!-- Input Form State -->
+        <div id="input-container">
+          <form id="extractor-form" class="terminal-form">
+            <div class="input-shell">
+              <div class="shell-prefix">></div>
+              <input 
+                type="text" 
+                id="shopee-url" 
+                class="terminal-input" 
+                placeholder="Paste Shopee Video URL (e.g., https://id.shp.ee/...)" 
+                required 
+                autocomplete="off"
+              />
+              <div class="input-action-cluster">
+                <button type="button" id="btn-clear" class="action-pill pill-clear" title="Clear input" style="display: none;">✕</button>
+                <button type="button" id="btn-paste" class="action-pill pill-paste">Paste Link</button>
+              </div>
+            </div>
+            <button type="submit" id="btn-extract" class="btn-execute">
+              <span class="btn-text">Execute Extraction</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </form>
+          <div id="status-message" class="status-banner" style="display: none;"></div>
+        </div>
+
+        <!-- Extraction Output State -->
+        <div id="result-card" class="result-deck" style="display: none;">
+          <div class="deck-header">
+            <div class="deck-tag">
+              <span class="tag-status">READY</span>
+              <span class="tag-meta">1080p MP4 Stream</span>
+            </div>
+            <h3 id="product-title" class="deck-title"></h3>
+          </div>
+
+          <div class="media-viewport">
+            <video 
+              id="video-player" 
+              controls 
+              controlsList="nodownload" 
+              oncontextmenu="return false;" 
+              preload="metadata" 
+              playsinline
+            ></video>
+          </div>
+
+          <div class="deck-controls">
+            <button id="btn-download-video" class="btn-download">
+              <span>Download Raw MP4</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+            <button id="btn-reset-flow" class="btn-reset">
+              <span>New Session</span>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Visual Guide / Tutorial Section -->
-    <section class="skeuo-card guide-card">
-      <h3 class="guide-title">Cara Mengunduh Video Shopee</h3>
-      <div class="steps-grid">
-        <div class="step-item">
-          <div class="step-num">1</div>
-          <div class="step-text">
-            <strong>Salin Link</strong>
-            <span>Buka Shopee Video, klik tombol <em>Share</em> lalu pilih <em>Salin Tautan</em>.</span>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">2</div>
-          <div class="step-text">
-            <strong>Tempel & Ambil</strong>
-            <span>Tekan tombol <em>Tempel</em> di kolom atas, lalu klik <em>Ambil Media</em>.</span>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">3</div>
-          <div class="step-text">
-            <strong>Download HD</strong>
-            <span>Pratinjau video akan tampil dan klik <em>Download Video MP4</em>.</span>
-          </div>
-        </div>
+    <!-- Architecture & Metrics Grid -->
+    <section id="how-it-works" class="features-section">
+      <div class="section-heading">
+        <span class="sub-label">01 // SYSTEM CAPABILITIES</span>
+        <h2 class="section-title">Core Performance Architecture</h2>
       </div>
 
-      <!-- Format Badges -->
-      <div class="supported-box">
-        <div class="support-label">Format Didukung:</div>
-        <div class="support-tags">
-          <span class="badge-tag ok">✓ id.shp.ee</span>
-          <span class="badge-tag ok">✓ sv.shopee.co.id</span>
-          <span class="badge-tag ok">✓ shopee.co.id/universal-link</span>
+      <div class="grid-three">
+        <div class="glass-card">
+          <div class="card-num">01</div>
+          <h4 class="card-head">Direct CDN Routing</h4>
+          <p class="card-text">Pintas transmisi WAF perantara untuk menarik video murni dari multi-media server Shopee tanpa transcoding ulang.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-num">02</div>
+          <h4 class="card-head">Zero Lossless Bitrate</h4>
+          <p class="card-text">Mempertahankan frame rate 60fps dan resolusi audio video asli tanpa watermark logo atau penurunan kualitas.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-num">03</div>
+          <h4 class="card-head">Stateless Execution</h4>
+          <p class="card-text">Tidak ada penyimpanan media di server. Semua proses stream disalurkan langsung menuju lokal penyimpanan Anda.</p>
         </div>
       </div>
     </section>
 
-    <!-- FAQ Accordion Section -->
-    <section class="skeuo-card faq-card">
-      <h3 class="guide-title">Pertanyaan Umum (FAQ)</h3>
-      <div class="faq-list">
-        <details class="faq-item">
-          <summary>Apakah video yang diunduh memiliki watermark Shopee?</summary>
-          <p>Tidak. Engine kami langsung mengambil stream resolusi asli dari CDN Shopee sehingga hasil download bersih tanpa watermark logo.</p>
+    <!-- Documentation & FAQ Section -->
+    <section id="faq" class="faq-section">
+      <div class="section-heading">
+        <span class="sub-label">02 // DOCUMENTATION</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-accordion">
+        <details class="faq-panel">
+          <summary class="faq-trigger">Format URL apa saja yang didukung oleh engine?</summary>
+          <div class="faq-body">
+            Engine mendukung tautan Shopee Video/Reels baik dari shortlink mobile (<code>https://id.shp.ee/...</code>, <code>https://s.shopee.co.id/...</code>) maupun tautan web portal (<code>https://sv.shopee.co.id/...</code>).
+          </div>
         </details>
-        <details class="faq-item">
-          <summary>Mengapa video tidak bisa diunduh langsung via menu titik tiga?</summary>
-          <p>Menu native dinonaktifkan untuk memastikan resolusi yang terunduh adalah kualitas bit-rate HD tertinggi melalui pipeline server kami.</p>
+        <details class="faq-panel">
+          <summary class="faq-trigger">Apakah media yang diunduh disimpan di database NEXMEDIA?</summary>
+          <div class="faq-body">
+            Tidak. Platform ini beroperasi secara stateless. URL CDN di-resolve secara real-time dan langsung dialirkan ke browser pengguna tanpa persistent logging.
+          </div>
         </details>
-        <details class="faq-item">
-          <summary>Apakah layanan ini gratis?</summary>
-          <p>Ya, alat ini 100% gratis digunakan kapan saja tanpa batas kuota harian.</p>
+        <details class="faq-panel">
+          <summary class="faq-trigger">Apakah terdapat batasan jumlah pengunduhan harian?</summary>
+          <div class="faq-body">
+            Tidak ada pembatasan kuota. Sistem dirancang dengan arsitektur edge tanpa batas untuk mendukung produktivitas kreator media.
+          </div>
         </details>
       </div>
     </section>
-
-    <footer class="app-footer">
-      <p>© 2026 Shopee Video Grabber Engine. All rights reserved.</p>
-    </footer>
   </main>
+
+  <!-- Legal Shield Footer -->
+  <footer id="legal" class="master-footer">
+    <div class="footer-container">
+      <div class="footer-col brand-col">
+        <div class="brand-logo footer-logo">
+          <span class="brand-icon">◆</span>
+          <span class="brand-name">NEXMEDIA<span class="brand-dot">.</span></span>
+        </div>
+        <p class="footer-bio">Autonomous high-velocity media parsing infrastructure for digital content curators and affiliate marketing workflows.</p>
+        <div class="system-tag">Edge Runtime // Powered by Cloudflare V8</div>
+      </div>
+
+      <div class="footer-col">
+        <h5 class="footer-head">Engine Directory</h5>
+        <ul class="footer-links">
+          <li><a href="#downloader">Shopee Video Parser</a></li>
+          <li><span class="muted-link">TikTok Engine (In Dev)</span></li>
+          <li><span class="muted-link">IG Reels Engine (In Dev)</span></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5 class="footer-head">Compliance & Legal</h5>
+        <ul class="footer-links">
+          <li><a href="javascript:void(0)" onclick="openModal('modal-terms')">Terms of Service</a></li>
+          <li><a href="javascript:void(0)" onclick="openModal('modal-privacy')">Privacy Policy</a></li>
+          <li><a href="javascript:void(0)" onclick="openModal('modal-disclaimer')">DMCA & Fair Use</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Legal Disclaimer Notice -->
+    <div class="footer-disclaimer">
+      <p>
+        <strong>Legal Disclaimer:</strong> NEXMEDIA is an independent utility engine and is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Shopee, Sea Group, or any of its subsidiaries. This service is provided strictly for educational purposes, personal archival, and fair-use creator referencing.
+      </p>
+      <div class="footer-cr">
+        © 2026 NEXMEDIA Systems. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modals for Legal Pages -->
+  <div id="modal-terms" class="modal-backdrop">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h4>Terms of Service</h4>
+        <button class="modal-close" onclick="closeModal('modal-terms')">✕</button>
+      </div>
+      <div class="modal-content">
+        <p>Dengan menggunakan NEXMEDIA, Anda menyetujui bahwa alat ini digunakan hanya untuk keperluan backup media pribadi dan tujuan riset konten yang mematuhi hukum hak cipta. Pengguna bertanggung jawab penuh atas hak cipta materi yang diunduh dan dipublikasikan ulang.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-privacy" class="modal-backdrop">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h4>Privacy Policy</h4>
+        <button class="modal-close" onclick="closeModal('modal-privacy')">✕</button>
+      </div>
+      <div class="modal-content">
+        <p>NEXMEDIA tidak menyimpan data pribadi, cookies peramban, maupun riwayat video yang Anda unduh ke database server kami. Semua lalu lintas diproses langsung secara terenkripsi melalui edge proxy.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-disclaimer" class="modal-backdrop">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h4>DMCA & Fair Use Policy</h4>
+        <button class="modal-close" onclick="closeModal('modal-disclaimer')">✕</button>
+      </div>
+      <div class="modal-content">
+        <p>Kami menghormati hak kekayaan intelektual. Jika Anda adalah pemilik hak cipta atas konten tertentu dan tidak ingin konten tersebut diakses oleh engine publik, silakan hubungi administrator untuk penanganan metadata blacklist.</p>
+      </div>
+    </div>
+  </div>
 
   <script src="/assets/js/app.js" defer></script>
 </body>

@@ -1,19 +1,17 @@
 /**
- * Shopee Video Downloader - Production Flow Logic
+ * NEXMEDIA Core Client Engine
  */
 
-// Ganti dengan link affiliate target Anda
-const AFFILIATE_LINK = "https://s.shopee.co.id/your_affiliate_id";
+const AFFILIATE_TARGET = "https://s.shopee.co.id/your_affiliate_id";
 
-// State Session: Reset setiap kali halaman direfresh / reset dipencet
-let isAffiliateTriggered = false;
-let currentVideoData = {
+let isAffiliateSessionTriggered = false;
+let currentPayload = {
   title: "",
   videoUrl: null
 };
 
 // DOM Elements
-const inputCard = document.getElementById("input-card");
+const inputContainer = document.getElementById("input-container");
 const resultCard = document.getElementById("result-card");
 const extractorForm = document.getElementById("extractor-form");
 const shopeeUrlInput = document.getElementById("shopee-url");
@@ -26,15 +24,15 @@ const videoPlayer = document.getElementById("video-player");
 const btnDownloadVideo = document.getElementById("btn-download-video");
 const btnResetFlow = document.getElementById("btn-reset-flow");
 
-// 1. Logika Trigger Affiliate (1 Kali Per-Sesi Kerja / Reset)
-function triggerAffiliateSession() {
-  if (!isAffiliateTriggered) {
-    isAffiliateTriggered = true;
-    window.open(AFFILIATE_LINK, "_blank", "noopener,noreferrer");
+// 1. One-Session Affiliate Trigger
+function executeAffiliateRedirect() {
+  if (!isAffiliateSessionTriggered) {
+    isAffiliateSessionTriggered = true;
+    window.open(AFFILIATE_TARGET, "_blank", "noopener,noreferrer");
   }
 }
 
-// 2. Kontrol Tombol Clear (✕) & Input Listeners
+// 2. Input Control Listeners
 shopeeUrlInput.addEventListener("input", () => {
   btnClear.style.display = shopeeUrlInput.value.trim() ? "flex" : "none";
 });
@@ -45,30 +43,29 @@ btnClear.addEventListener("click", () => {
   shopeeUrlInput.focus();
 });
 
-// 3. Tombol Tempel (Paste Clipboard)
 btnPaste.addEventListener("click", async () => {
   try {
     const text = await navigator.clipboard.readText();
     shopeeUrlInput.value = text.trim();
     btnClear.style.display = text.trim() ? "flex" : "none";
-    showStatus("Tautan berhasil ditempel!", "success");
+    showStatus("Tautan berhasil ditempel dari clipboard.", "success");
   } catch {
     shopeeUrlInput.focus();
-    showStatus("Silakan tempel (Paste) link secara manual.", "error");
+    showStatus("Tempel tautan video secara manual.", "error");
   }
 });
 
-// 4. Form Submit & Extraction
+// 3. Form Submit & Edge Extraction
 extractorForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const rawUrl = shopeeUrlInput.value.trim();
 
   if (!rawUrl) {
-    showStatus("Harap masukkan tautan video terlebih dahulu.", "error");
+    showStatus("Masukkan tautan Shopee Video terlebih dahulu.", "error");
     return;
   }
 
-  setLoading(true);
+  setLoadingState(true);
   hideStatus();
 
   try {
@@ -81,48 +78,42 @@ extractorForm.addEventListener("submit", async (e) => {
     const result = await response.json();
 
     if (!response.ok || result.error) {
-      throw new Error(result.error || "Gagal mengurai video.");
+      throw new Error(result.error || "Gagal mengekstrak video stream.");
     }
 
     const item = result.data?.item;
     const videoUrl = item?.video_info_list?.[0]?.default_format?.url;
 
     if (!videoUrl) {
-      throw new Error("Video tidak ditemukan pada tautan ini.");
+      throw new Error("Stream video tidak ditemukan pada tautan ini.");
     }
 
-    currentVideoData = {
+    currentPayload = {
       title: item.name || "Shopee_Video_HD",
       videoUrl: videoUrl
     };
 
-    // Tampilkan Hasil & Collapse Input Form
-    renderResultCard();
+    // Render Deck Output
+    productTitle.textContent = currentPayload.title;
+    videoPlayer.src = currentPayload.videoUrl;
+
+    inputContainer.style.display = "none";
+    resultCard.style.display = "flex";
+
+    btnDownloadVideo.onclick = () => {
+      downloadVideoStream(currentPayload.videoUrl, `${sanitizeSlug(currentPayload.title)}.mp4`);
+    };
 
   } catch (err) {
-    showStatus(err.message || "Terjadi kesalahan koneksi.", "error");
+    showStatus(err.message || "Terjadi gangguan jaringan edge.", "error");
   } finally {
-    setLoading(false);
+    setLoadingState(false);
   }
 });
 
-// 5. Render & UI Transitions
-function renderResultCard() {
-  productTitle.textContent = currentVideoData.title;
-  videoPlayer.src = currentVideoData.videoUrl;
-  
-  // Sembunyikan form input dan tampilkan card hasil
-  inputCard.style.display = "none";
-  resultCard.style.display = "block";
-
-  btnDownloadVideo.onclick = () => {
-    downloadVideoFile(currentVideoData.videoUrl, `${sanitizeFilename(currentVideoData.title)}.mp4`);
-  };
-}
-
-// 6. Download Functionality + Affiliate Trigger
-async function downloadVideoFile(url, filename) {
-  triggerAffiliateSession();
+// 4. Download Execution Handler
+async function downloadVideoStream(url, filename) {
+  executeAffiliateRedirect();
 
   try {
     const res = await fetch(url);
@@ -140,31 +131,27 @@ async function downloadVideoFile(url, filename) {
   }
 }
 
-// 7. Reset / Mulai Unduh Video Baru
+// 5. Reset Flow
 btnResetFlow.addEventListener("click", () => {
-  // Reset Form
   shopeeUrlInput.value = "";
   btnClear.style.display = "none";
   videoPlayer.src = "";
-  
-  // Reset Affiliate Session agar sesi baru kembali membuka tab affiliate saat download
-  isAffiliateTriggered = false;
+  isAffiliateSessionTriggered = false;
 
-  // Toggle Tampilan
   resultCard.style.display = "none";
-  inputCard.style.display = "block";
+  inputContainer.style.display = "block";
   hideStatus();
   shopeeUrlInput.focus();
 });
 
 // Helpers
-function sanitizeFilename(name) {
-  return name.replace(/[^a-z0-9]/gi, "_").toLowerCase().substring(0, 30);
+function sanitizeSlug(str) {
+  return str.replace(/[^a-z0-9]/gi, "_").toLowerCase().substring(0, 32);
 }
 
 function showStatus(text, type) {
   statusMsg.textContent = text;
-  statusMsg.className = `status-bar ${type}`;
+  statusMsg.className = `status-banner ${type}`;
   statusMsg.style.display = "block";
 }
 
@@ -172,7 +159,24 @@ function hideStatus() {
   statusMsg.style.display = "none";
 }
 
-function setLoading(isLoading) {
+function setLoadingState(isLoading) {
   btnExtract.disabled = isLoading;
-  btnExtract.textContent = isLoading ? "Mengambil Video..." : "Ambil Media";
+  btnExtract.querySelector(".btn-text").textContent = isLoading ? "Parsing Stream..." : "Execute Extraction";
 }
+
+// Modal Helpers
+window.openModal = function(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = "flex";
+};
+
+window.closeModal = function(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = "none";
+};
+
+window.onclick = function(event) {
+  if (event.target.classList.contains("modal-backdrop")) {
+    event.target.style.display = "none";
+  }
+};
