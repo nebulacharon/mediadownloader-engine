@@ -1,10 +1,12 @@
 /**
- * Shopee Media Downloader Client Logic
+ * Shopee Media Downloader - Pure Client-Side Extractor
+ * Menggunakan Client IP via CORS Gateway & DOM Parser
  */
 
 const DEFAULT_AFFILIATE_URL = "https://s.shopee.co.id/your_affiliate_id";
 const CDN_IMAGE_PREFIX = "https://down-id.img.susercontent.com/file/";
 
+// DOM Selectors
 const elements = {
   form: document.getElementById("extractor-form"),
   urlInput: document.getElementById("shopee-url"),
@@ -28,7 +30,7 @@ let currentMedia = {
   affiliateTarget: DEFAULT_AFFILIATE_URL
 };
 
-// 1. One-Session Affiliate
+// 1. One-Session Affiliate Trigger
 function triggerOneSessionAffiliate() {
   const hasTriggered = sessionStorage.getItem("sp_affiliate_triggered");
   if (!hasTriggered) {
@@ -38,7 +40,7 @@ function triggerOneSessionAffiliate() {
   }
 }
 
-// 2. Form Submit & Extract
+// 2. Client-Side Extraction Logic
 elements.form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const rawUrl = elements.urlInput.value.trim();
@@ -52,59 +54,105 @@ elements.form.addEventListener("submit", async (e) => {
   resetResults();
 
   try {
-    const response = await fetch("/api/parse", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: rawUrl })
-    });
+    // A. Ekstrak Target URL (Handle Shortlink via CORS Gateway jika diperlukan)
+    let targetUrl = rawUrl;
+    
+    // B. Parse Shop ID & Item ID dari string URL
+    let { shopId, itemId } = extractIdsFromUrl(targetUrl);
 
-    const result = await response.json();
-
-    if (!response.ok || result.error) {
-      throw new Error(result.error || "Gagal mengambil data produk");
+    // Jika berupa shortlink (shp.ee / s.shopee.co.id), fetch HTML redirectnya dari client
+    if (!shopId || !itemId) {
+      showStatus("Mengurai shortlink...", "success");
+      const unshortened = await resolveShortlinkClient(rawUrl);
+      const parsed = extractIdsFromUrl(unshortened);
+      shopId = parsed.shopId;
+      itemId = parsed.itemId;
     }
 
-    processShopeeData(result.data || result);
+    if (!shopId || !itemId) {
+      throw new Error("Gagal membaca ID Produk. Gunakan link lengkap dari browser desktop.");
+    }
+
+    showStatus("Mengambil data media...", "success");
+
+    // C. Fetch Data Produk via Client-Side CORS Proxy
+    const productData = await fetchProductDataClient(shopId, itemId);
+    
+    processShopeeData(productData, shopId, itemId);
     showStatus("Media berhasil dimuat!", "success");
+
   } catch (err) {
-    showStatus(err.message || "Terjadi kesalahan. Coba link produk lain.", "error");
+    showStatus(err.message || "Gagal memproses media produk.", "error");
   } finally {
     setLoading(false);
   }
 });
 
-// 3. Tombol Tempel (Perbaikan Clipboard Fallback)
-if (elements.btnPaste) {
-  elements.btnPaste.addEventListener("click", async () => {
-    try {
-      if (navigator.clipboard && navigator.clipboard.readText) {
-        const text = await navigator.clipboard.readText();
-        elements.urlInput.value = text.trim();
-        showStatus("Tautan berhasil ditempel!", "success");
-      } else {
-        // Fallback jika permission browser ditolak
-        elements.urlInput.focus();
-        showStatus("Silakan tekan Ctrl+V (atau tahan & Paste di HP)", "error");
-      }
-    } catch {
-      elements.urlInput.focus();
-      showStatus("Izin akses clipboard ditolak. Tempel secara manual.", "error");
+// Helper: Regex Parser untuk ShopID & ItemID
+function extractIdsFromUrl(url) {
+  let shopId = null;
+  let itemId = null;
+
+  const matchDash = url.match(/-i\.(\d+)\.(\d+)/);
+  const matchProduct = url.match(/product\/(\d+)\/(\d+)/);
+  const matchParams = url.match(/itemid=(\d+)&shopid=(\d+)/i) || url.match(/shopid=(\d+)&itemid=(\d+)/i);
+
+  if (matchDash) {
+    shopId = matchDash[1];
+    itemId = matchDash[2];
+  } else if (matchProduct) {
+    shopId = matchProduct[1];
+    itemId = matchProduct[2];
+  } else if (matchParams) {
+    if (url.includes("itemid=") && url.indexOf("itemid=") < url.indexOf("shopid=")) {
+      itemId = matchParams[1];
+      shopId = matchParams[2];
+    } else {
+      shopId = matchParams[1];
+      itemId = matchParams[2];
     }
-  });
+  }
+
+  return { shopId, itemId };
 }
 
-// 4. Render Media
-function processShopeeData(data) {
-  const item = data.item || data;
+// Helper: Resolve Shortlink di Client
+async function resolveShortlinkClient(shortUrl) {
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(shortUrl)}`;
+  const res = await fetch(proxyUrl);
+  const html = await res.text();
+  
+  // Cari link redirect internal di dalam meta tag / script
+  const redirectMatch = html.match(/content=["']\d+;\s*url=([^"']+)["']/i) || 
+                        html.match(/window\.location\.href\s*=\s*["']([^"']+)["']/i) ||
+                        html.match(/-i\.(\d+)\.(\d+)/);
 
-  currentMedia.title = item.name || "Shopee_Media";
+  return redirectMatch ? redirectMatch[0] : shortUrl;
+}
+
+// Helper: Fetch Shopee API via Client Proxy
+async function fetchProductDataClient(shopId, itemId) {
+  const targetApi = `https://mall.shopee.co.id/api/v2/item/get?itemid=${itemId}&shopid=${shopId}`;
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetApi)}`;
+
+  const res = await fetch(proxyUrl);
+  const data = await res.json();
+
+  if (!data || (!data.item && !data.data?.item)) {
+    throw new Error("Data produk tidak ditemukan atau dilindungi Shopee.");
+  }
+
+  return data.item || data.data.item;
+}
+
+// 3. Render Media ke UI
+function processShopeeData(item, shopId, itemId) {
+  currentMedia.title = item.name || "Shopee Product Media";
   elements.productTitle.textContent = currentMedia.title;
+  currentMedia.affiliateTarget = `https://shopee.co.id/product/${shopId}/${itemId}`;
 
-  if (item.itemid && item.shopid) {
-    currentMedia.affiliateTarget = `https://shopee.co.id/product/${item.shopid}/${item.itemid}`;
-    if (elements.btnViewShopee) {
-      elements.btnViewShopee.href = currentMedia.affiliateTarget;
-    }
+  if (elements.btnViewShopee) {
+    elements.btnViewShopee.href = currentMedia.affiliateTarget;
   }
 
   // Parse Video
@@ -127,7 +175,6 @@ function processShopeeData(data) {
 
   if (rawImages.length > 0) {
     rawImages.forEach((imgId, index) => {
-      // Menangani ID gambar hash Shopee maupun URL gambar penuh
       const fullImgUrl = imgId.startsWith("http") ? imgId : `${CDN_IMAGE_PREFIX}${imgId}`;
       currentMedia.images.push(fullImgUrl);
 
@@ -158,7 +205,7 @@ function processShopeeData(data) {
   elements.resultCard.style.display = "block";
 }
 
-// 5. Download Helpers
+// 4. Download & ZIP Handlers
 async function downloadSingleFile(url, filename) {
   triggerOneSessionAffiliate();
   try {
@@ -179,7 +226,7 @@ async function downloadSingleFile(url, filename) {
 
 async function downloadAllAsZip() {
   if (typeof JSZip === "undefined") {
-    showStatus("Komponen ZIP belum siap. Tunggu beberapa detik.", "error");
+    showStatus("Library ZIP belum siap, tunggu sebentar.", "error");
     return;
   }
 
@@ -211,11 +258,25 @@ async function downloadAllAsZip() {
 
     showStatus("ZIP berhasil diunduh!", "success");
   } catch {
-    showStatus("Gagal membuat arsip ZIP.", "error");
+    showStatus("Gagal membuat file ZIP.", "error");
   } finally {
     elements.btnDownloadZip.disabled = false;
     elements.btnDownloadZip.textContent = "Download Semua Foto (.ZIP)";
   }
+}
+
+// 5. Utilities
+if (elements.btnPaste) {
+  elements.btnPaste.addEventListener("click", async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      elements.urlInput.value = text.trim();
+      showStatus("Tautan berhasil ditempel!", "success");
+    } catch {
+      elements.urlInput.focus();
+      showStatus("Tempel tautan secara manual.", "error");
+    }
+  });
 }
 
 function sanitizeFilename(name) {
