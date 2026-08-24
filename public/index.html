@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopee Media Downloader - Unduh Video & Foto Shopee HD</title>
+  <meta name="description" content="Tools online gratis untuk mengunduh video Shopee tanpa watermark dan foto produk kualitas HD. Cepat, bersih, dan mendukung tautan desktop & mobile." />
+  
+  <!-- Schema Markup (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Shopee Media Downloader",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/skeuomorphic.css" />
+  <!-- JSZip untuk fitur Download All Photos -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+</head>
+<body>
+
+  <main class="main-container">
+    <!-- Header App -->
+    <header class="app-header">
+      <div class="logo-badge">SV</div>
+      <div>
+        <h1 class="app-title">Shopee Media Grabber</h1>
+        <p class="app-subtitle">Download Video HD & Foto Produk Sekali Klik</p>
+      </div>
+    </header>
+
+    <!-- Input Box Card -->
+    <section class="skeuo-card form-card">
+      <form id="extractor-form">
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="shopee-url" 
+            class="skeuo-input" 
+            placeholder="Tempel tautan produk Shopee (Desktop / Mobile)..." 
+            required 
+            autocomplete="off"
+          />
+          <button type="button" id="btn-paste" class="btn-subtle" title="Tempel dari Clipboard">
+            Tempel
+          </button>
+        </div>
+        <button type="submit" id="btn-extract" class="skeuo-button primary-btn">
+          Ambil Media
+        </button>
+      </form>
+      <div id="status-message" class="status-bar" style="display: none;"></div>
+    </section>
+
+    <!-- Slot Iklan Banner Statis 1 -->
+    <aside class="ad-slot-placeholder" aria-label="Iklan">
+      <span class="ad-label">Advertisement</span>
+      <!-- Ganti dengan Script Tag Banner AdSense / Network Anda -->
+      <div class="ad-box-mock">Banner Statis Non-Intrusif (320x50 / 300x100)</div>
+    </aside>
+
+    <!-- Result Card -->
+    <section id="result-card" class="skeuo-card result-wrapper" style="display: none;">
+      <h2 id="product-title" class="result-title"></h2>
+
+      <!-- Video Section -->
+      <div id="video-container" class="media-block" style="display: none;">
+        <div class="section-tag video-tag">Video HD (Tanpa Watermark)</div>
+        <div class="video-frame">
+          <video id="video-player" controls preload="metadata"></video>
+        </div>
+        <button id="btn-download-video" class="skeuo-button accent-btn">
+          Download Video MP4
+        </button>
+      </div>
+
+      <!-- Photos Section -->
+      <div id="photos-container" class="media-block">
+        <div class="photos-header">
+          <div class="section-tag photo-tag">Foto Produk HD</div>
+          <button id="btn-download-zip" class="skeuo-button success-btn" style="display: none;">
+            Download Semua Foto (.ZIP)
+          </button>
+        </div>
+        <div id="images-grid" class="photos-grid"></div>
+      </div>
+
+      <!-- Direct Shopee Action -->
+      <div class="product-link-block">
+        <a id="btn-view-shopee" href="#" target="_blank" rel="noopener noreferrer" class="skeuo-button subtle-link-btn">
+          Lihat Produk Asli di Shopee
+        </a>
+      </div>
+    </section>
+
+    <!-- Slot Iklan Banner Statis 2 -->
+    <aside class="ad-slot-placeholder" aria-label="Iklan">
+      <span class="ad-label">Advertisement</span>
+      <div class="ad-box-mock">Banner Statis 300x250</div>
+    </aside>
+  </main>
+
+  <script src="/assets/js/app.js" defer></script>
+</body>
+</html>

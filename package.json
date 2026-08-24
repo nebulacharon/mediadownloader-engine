@@ -1,0 +1,12 @@
+{
+    "name": "shopee-media-downloader",
+    "version": "1.0.0",
+    "description": "Clean Skeuomorphic Shopee Video and Photo Downloader",
+    "main": "index.html",
+    "scripts": {
+      "dev": "wrangler pages dev public"
+    },
+    "keywords": ["shopee", "downloader", "skeuomorphism"],
+    "author": "",
+    "license": "MIT"
+  }
