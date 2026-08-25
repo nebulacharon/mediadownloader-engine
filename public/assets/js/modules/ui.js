@@ -1,6 +1,5 @@
 import { executeAffiliateSession } from "./affiliate.js";
 
-// Generator Format Nama: NEXMEDIA-20260824-101160.mp4
 export function generateBrandedFilename() {
   const now = new Date();
   const year = now.getFullYear();
@@ -23,21 +22,17 @@ export function hideStatus(el) {
   el.style.display = "none";
 }
 
-export async function downloadVideoStream(url, filename) {
+export function downloadVideoStream(url, filename) {
   executeAffiliateSession();
 
-  try {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename || generateBrandedFilename();
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(blobUrl);
-  } catch {
-    window.open(url, "_blank");
-  }
+  const finalName = filename || generateBrandedFilename();
+  // Download langsung via proxy stream byte-per-byte murni
+  const proxyDownloadUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(finalName)}`;
+  
+  const a = document.createElement("a");
+  a.href = proxyDownloadUrl;
+  a.setAttribute("download", finalName);
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
