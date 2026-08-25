@@ -10,12 +10,12 @@ export async function extractShopeeVideo(targetUrl) {
   
     const html = await response.text();
   
-    // 1. Ekstrak data JSON internal __NEXT_DATA__
-    const scriptMatches = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/i);
-    
     let rawVideoUrl = null;
     let caption = "Shopee Video HD";
   
+    // 1. Prioritas Utama: Ekstrak dari JSON __NEXT_DATA__
+    const scriptMatches = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/i);
+    
     if (scriptMatches && scriptMatches[1]) {
       try {
         const nextData = JSON.parse(scriptMatches[1]);
@@ -25,30 +25,32 @@ export async function extractShopeeVideo(targetUrl) {
           caption = videoData.caption;
         }
       } catch (e) {
-        // Fallback parse
+        // JSON parse fallback
       }
     }
   
-    // Fallback regex jika script tag gagal
+    // 2. Fallback: Scan semua pola MMS VOD di Raw HTML
     if (!rawVideoUrl) {
-      const rawMatches = html.match(/https:\/\/[^"'\s\\]+?\.vod\.susercontent\.com\/api\/v4\/[^"'\s\\]+?\.mp4/gi);
+      const rawMatches = html.match(/https:\/\/[^"'\s\\]+?\.vod\.susercontent\.com\/api\/v4\/[0-9]+\/mms\/id-[a-zA-Z0-9_\-]+[^"'\s\\]*/gi);
       if (rawMatches && rawMatches.length > 0) {
         rawVideoUrl = rawMatches[0].replace(/\\u002F/g, "/").replace(/\\/g, "");
       }
     }
   
     if (!rawVideoUrl) {
-      throw new Error("Stream video tidak ditemukan atau tautan tidak valid.");
+      throw new Error("Stream video tidak ditemukan pada tautan ini.");
     }
   
-    // 2. Transformasi ke Master Clean URL (Menghapus Transcode Watermark)
-    // Contoh: .../mms/id-11110124-xxx.1600355178.mp4 -> .../mms/id-11110124-xxx.mp4
+    // 3. Robust Master Cleaner:
+    // Menangkap bagian https://.../mms/id-xxxx dan mengabaikan SEMUA suffix titik/transcode apapun
+    // Contoh:
+    // https://down-aka-id.vod.susercontent.com/api/v4/11110124/mms/id-11110124-6kou6-mducj6j9pci834.16003551756125666.59.mp4
+    // -> https://down-aka-id.vod.susercontent.com/api/v4/11110124/mms/id-11110124-6kou6-mducj6j9pci834.mp4
     let cleanMasterUrl = rawVideoUrl;
-    const mmsMatch = rawVideoUrl.match(/(https:\/\/[^\/]+\/api\/v4\/[^\/]+\/mms\/(id-[a-zA-Z0-9_\-]+))(\.[0-9]+)*\.mp4/i);
+    const mmsExtract = rawVideoUrl.match(/(https:\/\/[^\/]+\/api\/v4\/[0-9]+\/mms\/(id-[a-zA-Z0-9_\-]+))/i);
   
-    if (mmsMatch) {
-      // Membangun URL Master Bersih HD
-      cleanMasterUrl = `${mmsMatch[1]}.mp4`;
+    if (mmsExtract && mmsExtract[1]) {
+      cleanMasterUrl = `${mmsExtract[1]}.mp4`;
     }
   
     return {
