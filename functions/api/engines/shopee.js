@@ -41,20 +41,21 @@ export async function extractShopeeVideo(targetUrl) {
       throw new Error("Stream video tidak ditemukan pada tautan ini.");
     }
   
-    // 3. Smart Master Verification
+    // 3. Smart Master Detection:
+    // Coba ambil Master HD Clean (.mp4 tanpa suffix)
     let finalVideoUrl = rawVideoUrl;
     const mmsExtract = rawVideoUrl.match(/(https:\/\/[^\/]+\/api\/v4\/[0-9]+\/mms\/(id-[a-zA-Z0-9_\-]+))/i);
   
     if (mmsExtract && mmsExtract[1]) {
       const candidateMasterUrl = `${mmsExtract[1]}.mp4`;
       try {
-        // Verifikasi apakah file master tanpa watermark aktif di server Shopee
+        // Cek ketersediaan file master HD murni
         const checkRes = await fetch(candidateMasterUrl, { method: "HEAD" });
         if (checkRes.status === 200) {
           finalVideoUrl = candidateMasterUrl;
         }
       } catch {
-        // Gunakan rawVideoUrl jika master tidak dapat diakses
+        // Jika master tidak tersedia, gunakan stream transcode yang aktif
         finalVideoUrl = rawVideoUrl;
       }
     }
