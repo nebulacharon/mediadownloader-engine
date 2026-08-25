@@ -1,53 +1,40 @@
 :root {
-    --bg-deep: #0f141c;
+    --bg-deep: transparent;
     --text-main: #FFFFFF;
-    --text-muted: #E2E8F0;
-    --border-glass: rgba(255, 255, 255, 0.28);
-    --border-glass-subtle: rgba(255, 255, 255, 0.16);
-    --card-glass: rgba(255, 255, 255, 0.12);
-    --card-glass-hover: rgba(255, 255, 255, 0.18);
-    --bg-fold: rgba(0, 0, 0, 0.25);
+    --text-muted: #CBD5E1;
+    --border-glass: rgba(255, 255, 255, 0.18);
+    --card-glass: rgba(12, 18, 28, 0.45);
+    --card-glass-hover: rgba(255, 255, 255, 0.12);
+    --bg-fold: rgba(10, 15, 28, 0.75);
   
-    /* Tema Default: Shopee */
+    /* Tema Default: Shopee (Orange Fruit Glass) */
     --accent: #FF5722;
-    --accent-glow: rgba(255, 87, 34, 0.55);
+    --accent-glow: rgba(255, 87, 34, 0.45);
     --accent-secondary: #FF8A65;
   }
   
   body[data-theme="shopee"] {
     --accent: #FF5722;
-    --accent-glow: rgba(255, 87, 34, 0.55);
+    --accent-glow: rgba(255, 87, 34, 0.45);
     --accent-secondary: #FF8A65;
   }
   
   body[data-theme="tiktok"] {
     --accent: #00F2FE;
-    --accent-glow: rgba(0, 242, 254, 0.55);
+    --accent-glow: rgba(0, 242, 254, 0.45);
     --accent-secondary: #4FACFE;
   }
   
   body[data-theme="instagram"] {
     --accent: #E1306C;
-    --accent-glow: rgba(225, 48, 108, 0.55);
+    --accent-glow: rgba(225, 48, 108, 0.45);
     --accent-secondary: #F77737;
-  }
-  
-  body[data-theme="facebook"] {
-    --accent: #1877F2;
-    --accent-glow: rgba(24, 119, 242, 0.55);
-    --accent-secondary: #4292f7;
-  }
-  
-  body[data-theme="x"] {
-    --accent: #ffffff;
-    --accent-glow: rgba(255, 255, 255, 0.45);
-    --accent-secondary: #94a3b8;
   }
   
   html {
     overflow-y: scroll;
     scroll-behavior: smooth;
-    background-color: var(--bg-deep);
+    background-color: #06090e;
   }
   
   * {
