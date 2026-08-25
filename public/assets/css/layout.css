@@ -1,44 +1,46 @@
 /* Dynamic Ambient Background Layer */
 .ambient-backdrop {
     position: fixed;
-    inset: -20px;
+    inset: 0;
     z-index: -2;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('/assets/images/shopee-bg.jpg');
-    /* Naikkan brightness & saturasi agar corak abstrak oranye menyala */
-    filter: brightness(1.2) saturate(140%);
-    -webkit-filter: brightness(1.2) saturate(140%);
+    background-image: url('../images/shopee-bg.jpg');
     transition: background-image 0.6s ease;
     transform: scale(1.02);
   }
   
   body[data-theme="shopee"] .ambient-backdrop {
-    background-image: url('/assets/images/shopee-bg.jpg');
+    background-image: url('../images/shopee-bg.jpg');
   }
   
   body[data-theme="instagram"] .ambient-backdrop {
-    background-image: url('/assets/images/instagram-bg.jpg');
+    background-image: url('../images/instagram-bg.jpg');
   }
   
   body[data-theme="tiktok"] .ambient-backdrop,
   body[data-theme="facebook"] .ambient-backdrop {
-    background-image: url('/assets/images/facebook-bg.jpg');
+    background-image: url('../images/facebook-bg.jpg');
   }
   
   body[data-theme="x"] .ambient-backdrop {
-    background-image: url('/assets/images/x-bg.jpg');
+    background-image: url('../images/x-bg.jpg');
   }
   
-  /* Overlay Transparan Ringan (Hapus bayangan hitam pekat) */
+  /* Semi-transparent Dark Ambient Overlay */
   .ambient-overlay {
     position: fixed;
     inset: 0;
     z-index: -1;
-    background: radial-gradient(circle at 50% 25%, rgba(255, 255, 255, 0.08) 0%, rgba(10, 15, 25, 0.35) 100%),
-                rgba(5, 8, 15, 0.18);
+    background: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.25) 0%, rgba(6, 9, 14, 0.85) 100%),
+                rgba(6, 9, 14, 0.4);
     pointer-events: none;
+  }
+  
+  .main-content-wrapper {
+    position: relative;
+    z-index: 2;
   }
   
   /* Navigation */
