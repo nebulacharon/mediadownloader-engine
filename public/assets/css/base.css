@@ -1,20 +1,18 @@
 :root {
-    --bg-deep: #06090e;
+    --bg-deep: transparent;
     --text-main: #FFFFFF;
-    --text-muted: #94A3B8;
-    --border-glass: rgba(255, 255, 255, 0.12);
-    --card-glass: rgba(15, 23, 42, 0.45);
-    --card-glass-hover: rgba(255, 255, 255, 0.08);
-    --bg-fold: rgba(10, 15, 28, 0.65);
+    --text-muted: #CBD5E1;
+    --border-glass: rgba(255, 255, 255, 0.18);
+    --card-glass: rgba(12, 18, 28, 0.45);
+    --card-glass-hover: rgba(255, 255, 255, 0.12);
+    --bg-fold: rgba(10, 15, 28, 0.75);
   
     /* Tema Default: Shopee (Orange Fruit Glass) */
     --accent: #FF5722;
     --accent-glow: rgba(255, 87, 34, 0.45);
     --accent-secondary: #FF8A65;
-    --radial-bg: rgba(255, 87, 34, 0.15);
   }
   
-  /* Dynamic Themes */
   body[data-theme="shopee"] {
     --accent: #FF5722;
     --accent-glow: rgba(255, 87, 34, 0.45);
@@ -33,21 +31,10 @@
     --accent-secondary: #F77737;
   }
   
-  body[data-theme="facebook"] {
-    --accent: #1877F2;
-    --accent-glow: rgba(24, 119, 242, 0.45);
-    --accent-secondary: #4292f7;
-  }
-  
-  body[data-theme="x"] {
-    --accent: #ffffff;
-    --accent-glow: rgba(255, 255, 255, 0.35);
-    --accent-secondary: #94a3b8;
-  }
-  
   html {
     overflow-y: scroll;
     scroll-behavior: smooth;
+    background-color: #06090e;
   }
   
   * {
@@ -62,7 +49,7 @@
     color: var(--text-main);
     font-family: 'Inter', -apple-system, sans-serif;
     line-height: 1.6;
-    background-color: var(--bg-deep);
+    background-color: transparent;
     min-height: 100vh;
     position: relative;
   }

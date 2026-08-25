@@ -1,40 +1,41 @@
-/* Dynamic Ambient Fruit Background */
+/* Dynamic Ambient Background Layer */
 .ambient-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: -2;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    transition: background-image 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s ease;
-    transform: scale(1.04);
+    background-image: url('../images/shopee-bg.jpg');
+    transition: background-image 0.6s ease;
+    transform: scale(1.02);
   }
   
   body[data-theme="shopee"] .ambient-backdrop {
-    background-image: url('/assets/images/shopee-bg.jpg');
+    background-image: url('../images/shopee-bg.jpg');
   }
   
   body[data-theme="instagram"] .ambient-backdrop {
-    background-image: url('/assets/images/instagram-bg.jpg');
+    background-image: url('../images/instagram-bg.jpg');
   }
   
+  body[data-theme="tiktok"] .ambient-backdrop,
   body[data-theme="facebook"] .ambient-backdrop {
-    background-image: url('/assets/images/facebook-bg.jpg');
+    background-image: url('../images/facebook-bg.jpg');
   }
   
-  body[data-theme="x"] .ambient-backdrop,
-  body[data-theme="tiktok"] .ambient-backdrop {
-    background-image: url('/assets/images/x-bg.jpg');
+  body[data-theme="x"] .ambient-backdrop {
+    background-image: url('../images/x-bg.jpg');
   }
   
+  /* Semi-transparent Dark Ambient Overlay */
   .ambient-overlay {
     position: fixed;
     inset: 0;
-    z-index: 1;
-    background: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.2) 0%, rgba(6, 9, 14, 0.82) 100%),
-                rgba(6, 9, 14, 0.45);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    z-index: -1;
+    background: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.25) 0%, rgba(6, 9, 14, 0.85) 100%),
+                rgba(6, 9, 14, 0.4);
+    pointer-events: none;
   }
   
   .main-content-wrapper {
@@ -49,12 +50,12 @@
     align-items: center;
     padding: 20px 0;
     border-bottom: 1px solid var(--border-glass);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(6, 9, 14, 0.6);
+    background: rgba(6, 9, 14, 0.55);
   }
   
   .nav-container {
@@ -102,9 +103,7 @@
   }
   
   .hero-highlight {
-    background: linear-gradient(135deg, #ffffff 30%, var(--text-muted) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FFFFFF;
   }
   
   .hero p {
@@ -166,7 +165,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--bg-deep);
+    background: #06090e;
     border: 2px solid var(--accent);
     box-shadow: 0 0 14px var(--accent-glow);
     z-index: 2;
@@ -192,7 +191,7 @@
     z-index: 2;
     border-top: 1px solid var(--border-glass);
     padding: 60px 0 40px;
-    background: rgba(6, 9, 14, 0.85);
+    background: rgba(6, 9, 14, 0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
